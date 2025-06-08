@@ -1,0 +1,121 @@
+# Product Requirements Document (PRD) for mini-rag
+
+## Project Overview
+
+**mini-rag** is a minimal implementation of the Retrieval-Augmented Generation (RAG) model for question answering. The project allows users to upload documents, process them into chunks, index them into a vector database, and perform semantic search and question answering over the indexed data. It is designed as an educational project, with step-by-step explanations available via a set of Arabic YouTube videos.
+
+## API Endpoints
+
+### 1. Welcome Endpoint
+- **URL:** `/api/v1/`
+- **Method:** `GET`
+- **Description:** Returns the application name and version.
+- **Parameters:** None
+- **Response:**
+  - `app_name` (str): The name of the application.
+  - `app_version` (str): The version of the application.
+
+### 2. List All Projects
+- **URL:** `/api/v1/projects/`
+- **Method:** `GET`
+- **Description:** Returns a list of all project IDs.
+- **Parameters:** None
+- **Response:**
+  - `signal` (str): Status signal (e.g., success or error message).
+  - `projects` (list of int): List of all project IDs.
+
+---
+
+### 3. Upload Data
+- **URL:** `/api/v1/data/upload/{project_id}`
+- **Method:** `POST`
+- **Description:** Upload a file to a specific project.
+- **Parameters:**
+  - `project_id` (path, int, required): The ID of the project to upload the file to.
+  - `file` (form-data, file, required): The file to upload.
+- **Response:**
+  - `signal` (str): Status signal (e.g., success or error message).
+  - `file_id` (str): The unique ID of the uploaded file (on success).
+
+---
+
+### 4. Process Data
+- **URL:** `/api/v1/data/process/{project_id}`
+- **Method:** `POST`
+- **Description:** Process uploaded files for a project, splitting them into chunks and storing them for later retrieval and search.
+- **Parameters:**
+  - `project_id` (path, int, required): The ID of the project to process files for.
+  - **Body (JSON):**
+    - `file_id` (str, optional): The ID of a specific file to process. If omitted, all files in the project are processed.
+    - `chunk_size` (int, optional, default=100): The size of each text chunk.
+    - `overlap_size` (int, optional, default=20): The overlap size between chunks.
+    - `do_reset` (int, optional, default=0): If set to 1, resets (deletes) previous chunks and vector collections before processing.
+- **Response:**
+  - `signal` (str): Status signal.
+  - `inserted_chunks` (int): Number of chunks inserted.
+  - `processed_files` (int): Number of files processed.
+
+---
+
+### 5. Index Push
+- **URL:** `/api/v1/nlp/index/push/{project_id}`
+- **Method:** `POST`
+- **Description:** Indexes the processed chunks of a project into the vector database.
+- **Parameters:**
+  - `project_id` (path, int, required): The ID of the project to index.
+  - **Body (JSON):**
+    - `do_reset` (int, optional, default=0): If set to 1, resets the vector collection before indexing.
+- **Response:**
+  - `signal` (str): Status signal.
+  - `inserted_items_count` (int): Number of items inserted into the vector database.
+
+---
+
+### 6. Index Info
+- **URL:** `/api/v1/nlp/index/info/{project_id}`
+- **Method:** `GET`
+- **Description:** Retrieves information about the vector database collection for a project.
+- **Parameters:**
+  - `project_id` (path, int, required): The ID of the project.
+- **Response:**
+  - `signal` (str): Status signal.
+  - `collection_info` (object): Information about the vector collection.
+
+---
+
+### 7. Index Search
+- **URL:** `/api/v1/nlp/index/search/{project_id}`
+- **Method:** `POST`
+- **Description:** Performs a semantic search over the indexed data for a project.
+- **Parameters:**
+  - `project_id` (path, int, required): The ID of the project to search.
+  - **Body (JSON):**
+    - `text` (str, required): The search query.
+    - `limit` (int, optional, default=5): The maximum number of results to return.
+- **Response:**
+  - `signal` (str): Status signal.
+  - `results` (list): List of search results.
+
+---
+
+### 8. Index Answer (RAG)
+- **URL:** `/api/v1/nlp/index/answer/{project_id}`
+- **Method:** `POST`
+- **Description:** Answers a question using Retrieval-Augmented Generation (RAG) over the indexed data for a project.
+- **Parameters:**
+  - `project_id` (path, int, required): The ID of the project to query.
+  - **Body (JSON):**
+    - `text` (str, required): The question to answer.
+    - `limit` (int, optional, default=5): The maximum number of context chunks to use.
+- **Response:**
+  - `signal` (str): Status signal.
+  - `answer` (str): The generated answer.
+  - `full_prompt` (str): The full prompt used for generation.
+  - `chat_history` (object): The chat history for the session.
+
+---
+
+## Notes
+- All endpoints are prefixed with `/api/v1/`.
+- Error responses include a `signal` field with an error message.
+- Authentication and authorization are not described in this PRD and may need to be added for production use. 
