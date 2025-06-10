@@ -10,42 +10,106 @@ A React-based frontend for the Mini-RAG application, which implements a minimal 
 - Search indexed documents semantically
 - Ask questions and get answers using RAG
 
-## Getting Started
+## Getting Started: Deploying on a New PC or Server
 
-### Prerequisites
+Follow these steps to set up and run the Mini-RAG frontend on a new machine:
 
-- Node.js (v18+)
-- npm or yarn
+### 1. Prerequisites
 
-### Installation
+- **Node.js** (v18 or higher): [Download Node.js](https://nodejs.org/)
+- **npm** (comes with Node.js) or **yarn**
+- **Git** (to clone the repository): [Download Git](https://git-scm.com/)
 
-1. Clone the repository
-2. Navigate to the frontend directory
-3. Install dependencies:
+### 2. Clone the Repository
+
+Open a terminal and run:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/mini-rag.git
+cd mini-rag/frontend
+```
+
+Replace `YOUR_USERNAME` with the correct GitHub username or use your own repository URL if different.
+
+### 3. Install Dependencies
+
+Install the required packages:
 
 ```bash
 npm install
 ```
 
-### Development
-
-To start the development server:
+Or, if you prefer yarn:
 
 ```bash
-npm run dev
+yarn install
 ```
 
-This will start the development server at http://localhost:3000.
+### 4. Configure Environment (Optional)
 
-### Building for Production
+If you need to set custom environment variables (e.g., API base URL), create a `.env` file in the `frontend` directory. Example:
 
-To build the application for production:
+```
+VITE_API_BASE_URL=http://localhost:8000
+```
+
+By default, the frontend expects the backend API to be available at `http://localhost:8000`.
+
+### 5. Running the Frontend
+
+#### Development Mode
+
+Start the development server (with hot reload):
+
+```bash
+npm run dev -- --host 0.0.0.0
+```
+
+Or with yarn:
+
+```bash
+yarn dev
+```
+
+The app will be available at [http://localhost:3000](http://localhost:3000).
+
+#### Production Build
+
+To build the app for production:
 
 ```bash
 npm run build
 ```
 
-The build artifacts will be stored in the `dist/` directory.
+Or with yarn:
+
+```bash
+yarn build
+```
+
+The build output will be in the `dist/` directory.
+
+To preview the production build locally:
+
+```bash
+npm run preview
+```
+
+Or with yarn:
+
+```bash
+yarn preview
+```
+
+### 6. Deploying the Production Build
+
+- Serve the contents of the `dist/` directory using any static file server (e.g., [serve](https://www.npmjs.com/package/serve), Nginx, Apache).
+- Example using `serve`:
+
+  ```bash
+  npm install -g serve
+  serve -s dist
+  ```
 
 ## API Integration
 
