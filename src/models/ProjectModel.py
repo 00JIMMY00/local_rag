@@ -24,7 +24,7 @@ class ProjectModel(BaseDataModel):
         
         return project
 
-    async def get_project_or_create_one(self, project_id: str):
+    async def get_project_or_create_one(self, project_id: str, project_name: str = None):
         async with self.db_client() as session:
             async with session.begin():
                 query = select(Project).where(Project.project_id == project_id)
@@ -32,13 +32,33 @@ class ProjectModel(BaseDataModel):
                 project = result.scalar_one_or_none()
                 if project is None:
                     project_rec = Project(
-                        project_id = project_id
+                        project_id = project_id,
+                        name = project_name or f"Project {project_id}"
                     )
 
                     project = await self.create_project(project=project_rec)
                     return project
                 else:
                     return project
+
+    async def update_project_name(self, project_id: int, name: str):
+        async with self.db_client() as session:
+            async with session.begin():
+                query = select(Project).where(Project.project_id == project_id)
+                result = await session.execute(query)
+                project = result.scalar_one_or_none()
+                if project:
+                    project.name = name
+                    await session.commit()
+                    return project
+                return None
+
+    async def get_project_by_id(self, project_id: int):
+        async with self.db_client() as session:
+            async with session.begin():
+                query = select(Project).where(Project.project_id == project_id)
+                result = await session.execute(query)
+                return result.scalar_one_or_none()
 
     async def get_all_projects(self, page: int=1, page_size: int=10):
 

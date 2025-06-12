@@ -28,7 +28,8 @@ async def index_project(request: Request, project_id: int, push_request: PushReq
     )
 
     project = await project_model.get_project_or_create_one(
-        project_id=project_id
+        project_id=project_id,
+        project_name=f"Project {project_id}"
     )
 
     if not project:
@@ -108,7 +109,8 @@ async def get_project_index_info(request: Request, project_id: int):
     )
 
     project = await project_model.get_project_or_create_one(
-        project_id=project_id
+        project_id=project_id,
+        project_name=f"Project {project_id}"
     )
 
     nlp_controller = NLPController(
@@ -135,7 +137,8 @@ async def search_index(request: Request, project_id: int, search_request: Search
     )
 
     project = await project_model.get_project_or_create_one(
-        project_id=project_id
+        project_id=project_id,
+        project_name=f"Project {project_id}"
     )
 
     nlp_controller = NLPController(
@@ -172,7 +175,8 @@ async def answer_rag(request: Request, project_id: int, search_request: SearchRe
     )
 
     project = await project_model.get_project_or_create_one(
-        project_id=project_id
+        project_id=project_id,
+        project_name=f"Project {project_id}"
     )
 
     nlp_controller = NLPController(

@@ -31,7 +31,8 @@ async def upload_data(request: Request, project_id: int, file: UploadFile,
     )
 
     project = await project_model.get_project_or_create_one(
-        project_id=project_id
+        project_id=project_id,
+        project_name=f"Project {project_id}"
     )
 
     # validate the file properties
@@ -101,7 +102,8 @@ async def process_endpoint(request: Request, project_id: int, process_request: P
     )
 
     project = await project_model.get_project_or_create_one(
-        project_id=project_id
+        project_id=project_id,
+        project_name=f"Project {project_id}"
     )
 
     nlp_controller = NLPController(
