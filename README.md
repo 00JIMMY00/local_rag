@@ -113,3 +113,4 @@ $ uvicorn main:app --reload --host 0.0.0.0 --port 5000
 Download the POSTMAN collection from [/assets/mini-rag-app.postman_collection.json](/assets/mini-rag-app.postman_collection.json)
 
 cd frontend && npm run dev
+
