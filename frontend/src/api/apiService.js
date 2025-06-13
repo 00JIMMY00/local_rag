@@ -10,13 +10,29 @@ const apiService = {
 
   // Upload Data
   uploadFile: async (projectId, file) => {
+    console.log(`API Service: Uploading file to project ${projectId}`, file);
+    
     const formData = new FormData();
     formData.append('file', file);
-    return axios.post(`${API_BASE_URL}/data/upload/${projectId}`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    
+    // Log the FormData contents
+    console.log('FormData entries:');
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}: ${value instanceof File ? value.name : value}`);
+    }
+    
+    try {
+      const response = await axios.post(`${API_BASE_URL}/data/upload/${projectId}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log('Upload response:', response);
+      return response;
+    } catch (error) {
+      console.error('Upload error:', error.response || error);
+      throw error;
+    }
   },
 
   // Process Data
@@ -44,14 +60,32 @@ const apiService = {
     return axios.post(`${API_BASE_URL}/nlp/index/answer/${projectId}`, { text, limit });
   },
 
-  // Get all project IDs (as per PRD)
+  // Get all projects with their names
   getProjects: async () => {
     return axios.get(`${API_BASE_URL}/projects/`);
   },
 
-  // Create a new project (not in PRD, but kept for future use)
+  // Create a new project - try without trailing slash first, then with if it fails
   createProject: async (projectName) => {
-    return axios.post(`${API_BASE_URL}/projects`, { name: projectName });
+    try {
+      return await axios.post(`${API_BASE_URL}/projects`, { name: projectName });
+    } catch (error) {
+      if (error.response && error.response.status === 307) {
+        // If we get a redirect, try with trailing slash
+        return axios.post(`${API_BASE_URL}/projects/`, { name: projectName });
+      }
+      throw error;
+    }
+  },
+
+  // Get project details
+  getProject: async (projectId) => {
+    return axios.get(`${API_BASE_URL}/projects/${projectId}`);
+  },
+
+  // Update project name
+  updateProjectName: async (projectId, name) => {
+    return axios.put(`${API_BASE_URL}/projects/${projectId}/name`, { name });
   }
 };
 
