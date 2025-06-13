@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from routes import base, data, nlp, projects
 from helpers.config import get_settings
 from stores.llm.LLMProviderFactory import LLMProviderFactory
@@ -8,6 +9,15 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
 app = FastAPI()
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=['*'],  # Allows all methods
+    allow_headers=['*'],  # Allows all headers
+)
 
 async def startup_span():
     settings = get_settings()
@@ -20,7 +30,7 @@ async def startup_span():
     )
 
     llm_provider_factory = LLMProviderFactory(settings)
-    vectordb_provider_factory = VectorDBProviderFactory(config=settings, db_client=app.db_client)
+    vectordb_provider_factory = VectorDBProviderFactory(config=settings, db_client=app.db_client)      
 
     # generation client
     app.generation_client = llm_provider_factory.create(provider=settings.GENERATION_BACKEND)
@@ -30,7 +40,7 @@ async def startup_span():
     app.embedding_client = llm_provider_factory.create(provider=settings.EMBEDDING_BACKEND)
     app.embedding_client.set_embedding_model(model_id=settings.EMBEDDING_MODEL_ID,
                                              embedding_size=settings.EMBEDDING_MODEL_SIZE)
-    
+
     # vector db client
     app.vectordb_client = vectordb_provider_factory.create(
         provider=settings.VECTOR_DB_BACKEND
@@ -53,4 +63,4 @@ app.on_event("shutdown")(shutdown_span)
 app.include_router(base.base_router)
 app.include_router(data.data_router)
 app.include_router(nlp.nlp_router)
-app.include_router(projects.projects_router)
+app.include_router(projects.projects_router) 
