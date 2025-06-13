@@ -1,11 +1,15 @@
 import axios from 'axios';
 
-const API_BASE_URL = '/api/v1';
+const baseURL = `${import.meta.env.VITE_API_URL}${import.meta.env.VITE_API_BASE_PATH}`;
+
+const apiClient = axios.create({
+  baseURL: baseURL,
+});
 
 const apiService = {
   // Welcome endpoint
   getWelcome: async () => {
-    return axios.get(`${API_BASE_URL}/`);
+    return apiClient.get('/');
   },
 
   // Upload Data
@@ -22,7 +26,7 @@ const apiService = {
     }
     
     try {
-      const response = await axios.post(`${API_BASE_URL}/data/upload/${projectId}`, formData, {
+      const response = await apiClient.post(`/data/upload/${projectId}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -37,42 +41,42 @@ const apiService = {
 
   // Process Data
   processData: async (projectId, options = {}) => {
-    return axios.post(`${API_BASE_URL}/data/process/${projectId}`, options);
+    return apiClient.post(`/data/process/${projectId}`, options);
   },
 
   // Index Push
   pushToIndex: async (projectId, options = {}) => {
-    return axios.post(`${API_BASE_URL}/nlp/index/push/${projectId}`, options);
+    return apiClient.post(`/nlp/index/push/${projectId}`, options);
   },
 
   // Index Info
   getIndexInfo: async (projectId) => {
-    return axios.get(`${API_BASE_URL}/nlp/index/info/${projectId}`);
+    return apiClient.get(`/nlp/index/info/${projectId}`);
   },
 
   // Index Search
   searchIndex: async (projectId, text, limit = 5) => {
-    return axios.post(`${API_BASE_URL}/nlp/index/search/${projectId}`, { text, limit });
+    return apiClient.post(`/nlp/index/search/${projectId}`, { text, limit });
   },
 
   // Index Answer (RAG)
   getAnswer: async (projectId, text, limit = 5) => {
-    return axios.post(`${API_BASE_URL}/nlp/index/answer/${projectId}`, { text, limit });
+    return apiClient.post(`/nlp/index/answer/${projectId}`, { text, limit });
   },
 
   // Get all projects with their names
   getProjects: async () => {
-    return axios.get(`${API_BASE_URL}/projects/`);
+    return apiClient.get('/projects/');
   },
 
   // Create a new project - try without trailing slash first, then with if it fails
   createProject: async (projectName) => {
     try {
-      return await axios.post(`${API_BASE_URL}/projects`, { name: projectName });
+      return await apiClient.post('/projects', { name: projectName });
     } catch (error) {
       if (error.response && error.response.status === 307) {
         // If we get a redirect, try with trailing slash
-        return axios.post(`${API_BASE_URL}/projects/`, { name: projectName });
+        return apiClient.post('/projects/', { name: projectName });
       }
       throw error;
     }
@@ -80,12 +84,12 @@ const apiService = {
 
   // Get project details
   getProject: async (projectId) => {
-    return axios.get(`${API_BASE_URL}/projects/${projectId}`);
+    return apiClient.get(`/projects/${projectId}`);
   },
 
   // Update project name
   updateProjectName: async (projectId, name) => {
-    return axios.put(`${API_BASE_URL}/projects/${projectId}/name`, { name });
+    return apiClient.put(`/projects/${projectId}/name`, { name });
   }
 };
 
