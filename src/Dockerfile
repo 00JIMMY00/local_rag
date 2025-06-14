@@ -36,8 +36,28 @@ exec $cmd' > /wait-for-postgres.sh
 
 RUN chmod +x /wait-for-postgres.sh
 
+# Create a script to run migrations and start the app
+RUN echo '#!/bin/bash \n\
+set -e \n\
+\n\
+# Navigate to the alembic directory \n\
+cd /app/models/db_schemes/minirag \n\
+\n\
+# Run alembic migrations \n\
+echo "Running database migrations..." \n\
+alembic upgrade head \n\
+\n\
+# Return to app directory \n\
+cd /app \n\
+\n\
+# Start the application \n\
+echo "Starting the application..." \n\
+exec uvicorn main:app --host 0.0.0.0 --port 5000 --reload' > /start.sh
+
+RUN chmod +x /start.sh
+
 # Expose port
 EXPOSE 5000
 
 # Command to run the application
-CMD ["/wait-for-postgres.sh", "postgres", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000", "--reload"] 
+CMD ["/wait-for-postgres.sh", "postgres", "/start.sh"] 

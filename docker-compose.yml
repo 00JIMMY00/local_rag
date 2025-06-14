@@ -16,7 +16,7 @@ services:
       - POSTGRES_USERNAME=postgres
       - POSTGRES_PASSWORD=minirag2222
       - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
+      - POSTGRES_PORT=5445
       - POSTGRES_MAIN_DATABASE=minirag
       - GENERATION_BACKEND=OPENAI
       - EMBEDDING_BACKEND=COHERE
@@ -56,7 +56,7 @@ services:
     image: pgvector/pgvector:0.8.0-pg17
     container_name: minirag-postgres
     ports:
-      - "5432:5432"
+      - "5445:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=minirag2222
