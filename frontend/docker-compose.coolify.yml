@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: 00jimmy00/local-rag-frontend:latest
+    ports:
+      - "3001:3001"
+    environment:
+      - VITE_FRONTEND_URL=${VITE_FRONTEND_URL:-https://ragglocal.coderaai.com}
+      - VITE_API_URL=${VITE_API_URL:-http://173.212.254.228:5000}
+      - VITE_API_BASE_PATH=${VITE_API_BASE_PATH:-/api/v1}
+      - NODE_ENV=production
+    restart: unless-stopped
+    labels:
+      # Add Traefik labels for Coolify to pick up
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`ragglocal.coderaai.com`)"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3001"
+    # Simplify the health check
+    healthcheck:
+      disable: true 

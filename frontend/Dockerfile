@@ -1,4 +1,4 @@
- # Build stage
+# Build stage
 FROM node:20-alpine as build
 
 WORKDIR /app
@@ -15,16 +15,26 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Production stage
-FROM nginx:alpine
+# Final stage - using Node to serve static files
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install serve to host static files
+RUN npm install -g serve
 
 # Copy built assets from build stage
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/dist /app/dist
 
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy the entrypoint script
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
 # Expose port 3001
 EXPOSE 3001
 
-CMD ["nginx", "-g", "daemon off;"]
+# Set environment variables
+ENV NODE_ENV=production
+
+# Start the server
+CMD ["/app/entrypoint.sh"]

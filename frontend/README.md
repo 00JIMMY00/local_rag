@@ -111,6 +111,39 @@ yarn preview
   serve -s dist
   ```
 
+## Docker Deployment
+
+The frontend application is available as a Docker image on Docker Hub.
+
+### Docker Image
+
+```
+00jimmy00/local-rag-frontend:latest
+```
+
+### Environment Variables
+
+When deploying the frontend, configure the following environment variables:
+
+- `VITE_FRONTEND_URL`: The URL where the frontend is accessible (default: http://173.212.254.228:3001)
+- `VITE_API_URL`: The URL of the backend API (default: http://173.212.254.228:5000)
+- `VITE_API_BASE_PATH`: The base path for API endpoints (default: /api/v1)
+- `NODE_ENV`: The environment mode (default: production)
+
+### Coolify Deployment
+
+To deploy the application with Coolify:
+
+1. Create a new service in Coolify
+2. Select "Docker Hub" as the source
+3. Enter `00jimmy00/local-rag-frontend` as the image
+4. Set the tag to `latest`
+5. Configure the environment variables listed above
+6. Set the exposed port to `3001`
+7. Deploy the application
+
+You can also use the provided `docker-compose.coolify.yml` file as a reference for Coolify configuration.
+
 ## API Integration
 
 The frontend integrates with the Mini-RAG API endpoints as defined in the PRD:
