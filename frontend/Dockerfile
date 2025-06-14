@@ -14,5 +14,5 @@ RUN npm install
 # Expose port
 EXPOSE 3001
 
-# Command to run the application
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "3001"] 
+# Command to run the application using npx to ensure vite is found
+CMD ["npx", "vite", "--host", "0.0.0.0", "--port", "3001"] 

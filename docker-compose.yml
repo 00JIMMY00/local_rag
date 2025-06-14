@@ -26,6 +26,9 @@ services:
       - VECTOR_DB_BACKEND=PGVECTOR
       - PRIMARY_LANG=ar
       - DEFAULT_LANG=en
+    depends_on:
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - minirag-network
@@ -50,7 +53,7 @@ services:
       - minirag-network
 
   postgres:
-    image: ankane/pgvector:latest
+    image: pgvector/pgvector:0.8.0-pg17
     container_name: minirag-postgres
     ports:
       - "5432:5432"
@@ -60,6 +63,11 @@ services:
       - POSTGRES_DB=minirag
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     restart: unless-stopped
     networks:
       - minirag-network
