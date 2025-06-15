@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     COHERE_API_KEY: str = None
     GOOGLE_API_KEY: str = None
     GOOGLE_API_URL: str = None
+    OLLAMA_API_URL: str = None
 
     GENERATION_MODEL_ID_LITERAL: List[str] = None
     GENERATION_MODEL_ID: str = None

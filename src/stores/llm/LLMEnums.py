@@ -4,6 +4,7 @@ class LLMEnums(Enum):
     OPENAI = "OPENAI"
     COHERE = "COHERE"
     GOOGLE = "GOOGLE"
+    OLLAMA = "OLLAMA"
 
 class OpenAIEnums(Enum):
     SYSTEM = "system"
